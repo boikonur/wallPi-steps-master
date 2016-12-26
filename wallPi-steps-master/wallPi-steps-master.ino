@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include <Chrono.h>
-Chrono mainTimer(Chrono::SECONDS ); //60min timer
+
+char startGameB[] = "STARTB";
+char stopGameB[] = "STOPB:%d";
+
+Chrono gameTimer(Chrono::SECONDS ); //60min timer
 Chrono stepTimer(Chrono::MILLIS ); //20min timer
 
 #define DIST_THRESH 200
@@ -35,6 +39,8 @@ Chrono stepTimer(Chrono::MILLIS ); //20min timer
 boolean enabled_game = false;
 int steps_stage=0;
 int step_index=0;
+int result =0;
+
 void setup() {
 
 
@@ -93,6 +99,13 @@ void loop() {
           delay(100);
           if (digitalRead(SYNC_INPUT_PIN) == HIGH)
           {
+           digitalWrite(WRITE_EN_PIN, RS485Transmit);
+           delay(100);
+           Serial.print(startGameB);
+           Serial.print("\n");
+           delay(100);
+           digitalWrite(WRITE_EN_PIN, RS485Receive);
+
             steps_stage = 1;
             digitalWrite(SYNC_OUTPUT_PIN, LOW);
           }
@@ -131,7 +144,22 @@ void loop() {
         break;
 
       case 5: break;
-      case 6: break;
+      case 6:
+
+      char command[100] = "";
+       sprintf(command,
+               stopGameB,
+               result
+              );
+       digitalWrite(WRITE_EN_PIN, RS485Transmit);
+       delay(100);
+       Serial.print(command);
+       Serial.print("\n");
+       delay(100);
+       digitalWrite(WRITE_EN_PIN, RS485Receive);
+       steps_stage = 0;
+
+      break;
       case 7: break;
       case 8: break;
 
