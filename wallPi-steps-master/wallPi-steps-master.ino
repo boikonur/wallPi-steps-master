@@ -1,7 +1,5 @@
-
 /*
   master
-
 */
 
 #include <Arduino.h>
@@ -90,16 +88,24 @@ void loop() {
 
   if ( enabled_game == false)
   {
-      digitalWrite(BUTTON_LED_PIN, HIGH);
+    digitalWrite(BUTTON_LED_PIN, HIGH);
     if (digitalRead(BUTTON_PIN) == LOW)
     {
       delay(100);
       if (digitalRead(BUTTON_PIN) == LOW)
       {
-        digitalWrite(BUTTON_LED_PIN, LOW);
-        digitalWrite(SYNC_OUTPUT_PIN, HIGH);
-        enabled_game = true;
-        steps_stage = 0;
+
+         if (digitalRead(SYNC_INPUT_PIN) == HIGH)
+        {
+           delay(100);
+           if (digitalRead(SYNC_INPUT_PIN) == HIGH)
+           {
+            digitalWrite(BUTTON_LED_PIN, LOW);
+            digitalWrite(SYNC_OUTPUT_PIN, HIGH);
+            enabled_game = true;
+            steps_stage = 0;
+           }
+        }     
       }
     }
   }else{
@@ -152,6 +158,7 @@ int stepsGame() {
       step_index = 0;
       correctSteps = 0;
       stepAttempts = 0;
+      resultSlave=0;
       for (int i = 0; i < NUM_STEPS ; i++)
       {
         offStepLed(i);
@@ -161,11 +168,6 @@ int stepsGame() {
       break;
 
     case 1:
-
-
-
-      if (digitalRead(SYNC_INPUT_PIN) == HIGH)
-      {
 
         gameTimer.restart();
         stepTimer.restart();
@@ -178,10 +180,8 @@ int stepsGame() {
         digitalWrite(WRITE_EN_PIN, RS485Receive);
 
         steps_stage = 2;
-        digitalWrite(SYNC_OUTPUT_PIN, LOW);
-          delay(1000);
-      digitalWrite(SYNC_OUTPUT_PIN, HIGH);
-      }
+        digitalWrite(SYNC_OUTPUT_PIN, LOW); 
+
       break;
     case 2:
     
@@ -206,7 +206,7 @@ int stepsGame() {
 
       lastsyncINstate = syncINstate;
 
-      if (gameTimer.hasPassed(20))
+      if (gameTimer.hasPassed(120))
       {
         steps_stage = 4;
         break;
@@ -245,8 +245,8 @@ int stepsGame() {
     case 4:
       digitalWrite(SYNC_OUTPUT_PIN, HIGH);
       steps_stage = 0;
-//     Serial.print("slave: ");  Serial.println(resultSlave);
-//     Serial.print("result: ");       Serial.println(result);
+//     Serial.print("slave result: ");  Serial.println(resultSlave);
+//     Serial.print("master result: "); Serial.println(result);
 //     Serial.print("correctSteps: ");  Serial.println(correctSteps);
 //     Serial.print("stepAttempts: "); Serial.println(stepAttempts);
 //      
