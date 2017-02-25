@@ -136,7 +136,7 @@ void loop() {
 
 
 
-}//end loop
+}//\end loop
 
 
 void endBlink() {
@@ -180,7 +180,7 @@ int stepsGame() {
         digitalWrite(WRITE_EN_PIN, RS485Receive);
 
         steps_stage = 2;
-        digitalWrite(SYNC_OUTPUT_PIN, LOW); 
+       // digitalWrite(SYNC_OUTPUT_PIN, LOW); 
 
       break;
     case 2:
@@ -243,7 +243,8 @@ int stepsGame() {
         }
       break;
     case 4:
-      digitalWrite(SYNC_OUTPUT_PIN, HIGH);
+      digitalWrite(SYNC_OUTPUT_PIN, LOW);
+      digitalWrite(BUTTON_LED_PIN, HIGH);
       steps_stage = 0;
 //     Serial.print("slave result: ");  Serial.println(resultSlave);
 //     Serial.print("master result: "); Serial.println(result);
@@ -260,7 +261,6 @@ int stepsGame() {
       {
         offStepLed(i);
       }
-      digitalWrite(SYNC_OUTPUT_PIN, LOW);
       return result;
       break;
   }
